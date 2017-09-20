@@ -1,0 +1,23 @@
+{
+  "name": "couchdb-changes-client",
+  "version": "0.0.1",
+  "description": "A node client that listens to changes in a CouchDB database",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oscarfonts/couchdb-changes-client.git"
+  },
+  "author": "Oscar Fonts <oscar.fonts@geomati.co>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/oscarfonts/couchdb-changes-client/issues"
+  },
+  "homepage": "https://github.com/oscarfonts/couchdb-changes-client#readme",
+  "dependencies": {
+    "dotenv-safe": "4.0.4",
+    "request": "2.82.0"
+  }
+}
