@@ -2,7 +2,7 @@
   "name": "couchdb-changes-client",
   "version": "0.0.1",
   "description": "A node client that listens to changes in a CouchDB database",
-  "main": "index.js",
+  "main": "couchdb_change_notifier.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
