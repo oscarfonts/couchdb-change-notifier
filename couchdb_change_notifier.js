@@ -1,9 +1,9 @@
 const events = require('events')
 const request = require('request')
 
-const CouchdbChangeNotifier = function({db, user, password, since=0, interval=10}) {
+const CouchdbChangeNotifier = function ({db, user, password, since = 0, interval = 10}) {
   const event = new events.EventEmitter()
-  let last_seq = since
+  let lastSeq = since
 
   const noDesignDocuments = (item) => !item.id.startsWith('_design/')
 
@@ -12,7 +12,7 @@ const CouchdbChangeNotifier = function({db, user, password, since=0, interval=10
       baseUrl: db,
       url: '_changes',
       qs: {
-        since: last_seq,
+        since: lastSeq,
         include_docs: true,
         attachments: true
       },
@@ -27,8 +27,8 @@ const CouchdbChangeNotifier = function({db, user, password, since=0, interval=10
         onError(error)
       } else {
         body.results.filter(noDesignDocuments).map((item) => item.deleted ? onDelete(item) : onChange(item))
-        last_seq = body.last_seq
-        onPoll(last_seq)
+        lastSeq = body.last_seq
+        onPoll(lastSeq)
         // Schedule next query only after the previous one has been completely processed
         setTimeout(pollForChanges, interval * 1000)
       }
@@ -49,11 +49,11 @@ const CouchdbChangeNotifier = function({db, user, password, since=0, interval=10
     delete doc._rev
     delete doc._attachments
 
-    if(attachments) {
+    if (attachments) {
       const arr = Object.keys(attachments).map(key => attachments[key])
       doc.attachments = arr.map((attachment) => ({
         content_type: attachment.content_type,
-        data: attachment.data ? new Buffer(attachment.data, 'base64') : undefined
+        data: attachment.data ? Buffer.from(attachment.data, 'base64') : undefined
       }))
     }
 
