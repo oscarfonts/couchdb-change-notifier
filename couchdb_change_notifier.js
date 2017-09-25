@@ -1,32 +1,33 @@
 const events = require('events')
 const request = require('request')
 
-const CouchdbChangeNotifier = function ({db, user, password, since = 0, interval = 10}) {
+const CouchdbChangeNotifier = function (db, {since = 0, interval = 10, user, password, bearer}) {
   const event = new events.EventEmitter()
   let lastSeq = since
 
-  const noDesignDocuments = (item) => !item.id.startsWith('_design/')
+  const requestConfig = {
+    baseUrl: db,
+    url: '_changes',
+    qs: {
+      since: lastSeq,
+      include_docs: true,
+      attachments: true
+    },
+    json: true
+  }
+
+  if ((user && password) || bearer) {
+    requestConfig.auth = {user, password, bearer}
+  }
+
+  const noDesignDocumentsFilter = (item) => !item.id.startsWith('_design/')
 
   const pollForChanges = () => {
-    request.get({
-      baseUrl: db,
-      url: '_changes',
-      qs: {
-        since: lastSeq,
-        include_docs: true,
-        attachments: true
-      },
-      auth: {
-        user: user,
-        pass: password
-        // bearer: token
-      },
-      json: true
-    }, (error, response, body) => {
+    request.get(requestConfig, (error, response, body) => {
       if (error) {
         onError(error)
       } else {
-        body.results.filter(noDesignDocuments).map((item) => item.deleted ? onDelete(item) : onChange(item))
+        body.results.filter(noDesignDocumentsFilter).map((item) => item.deleted ? onDelete(item) : onChange(item))
         lastSeq = body.last_seq
         onPoll(lastSeq)
         // Schedule next query only after the previous one has been completely processed
